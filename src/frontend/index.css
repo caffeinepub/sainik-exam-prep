@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cabinet Grotesk - Display */
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("/assets/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Plus Jakarta Sans - Body */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans-Variable.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* Deep Navy - primary military tone */
+    --background: 0.97 0.006 250;
+    --foreground: 0.13 0.025 255;
+
+    --card: 1 0.002 250;
+    --card-foreground: 0.13 0.025 255;
+
+    --popover: 1 0.002 250;
+    --popover-foreground: 0.13 0.025 255;
+
+    /* Navy primary */
+    --primary: 0.25 0.08 255;
+    --primary-foreground: 0.98 0.005 250;
+
+    /* Light gray secondary */
+    --secondary: 0.93 0.01 255;
+    --secondary-foreground: 0.25 0.08 255;
+
+    --muted: 0.93 0.01 255;
+    --muted-foreground: 0.5 0.03 255;
+
+    /* Saffron accent */
+    --accent: 0.75 0.18 50;
+    --accent-foreground: 0.15 0.04 255;
+
+    --destructive: 0.577 0.245 27;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.88 0.015 255;
+    --input: 0.88 0.015 255;
+    --ring: 0.25 0.08 255;
+
+    /* India green */
+    --success: 0.55 0.18 145;
+    --success-foreground: 0.98 0 0;
+
+    /* Saffron warning */
+    --warning: 0.75 0.18 50;
+    --warning-foreground: 0.15 0 0;
+
+    --chart-1: 0.75 0.18 50;
+    --chart-2: 0.55 0.18 145;
+    --chart-3: 0.25 0.08 255;
+    --chart-4: 0.65 0.15 280;
+    --chart-5: 0.45 0.12 25;
+
+    --sidebar: 0.25 0.08 255;
+    --sidebar-foreground: 0.97 0.006 250;
+    --sidebar-primary: 0.75 0.18 50;
+    --sidebar-primary-foreground: 0.13 0.025 255;
+    --sidebar-accent: 0.32 0.09 255;
+    --sidebar-accent-foreground: 0.97 0.006 250;
+    --sidebar-border: 0.35 0.07 255;
+    --sidebar-ring: 0.75 0.18 50;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    font-feature-settings: "ss01" 1;
+  }
+}
+
+@layer utilities {
+  .text-gradient-saffron {
+    background: linear-gradient(135deg, oklch(0.75 0.18 50), oklch(0.65 0.2 30));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-india {
+    background: linear-gradient(135deg, oklch(0.75 0.18 50), oklch(0.75 0.01 0), oklch(0.55 0.18 145));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-military {
+    background: linear-gradient(160deg, oklch(0.2 0.065 255) 0%, oklch(0.15 0.045 250) 60%, oklch(0.12 0.03 240) 100%);
+  }
+
+  .bg-hero {
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% -10%, oklch(0.35 0.1 255 / 0.4), transparent),
+      linear-gradient(160deg, oklch(0.18 0.07 255) 0%, oklch(0.13 0.05 250) 100%);
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .saffron-glow {
+    box-shadow: 0 0 30px oklch(0.75 0.18 50 / 0.2);
+  }
+
+  .india-border {
+    border-image: linear-gradient(90deg, oklch(0.75 0.18 50), oklch(0.97 0 0), oklch(0.55 0.18 145)) 1;
+  }
+
+  .progress-bar {
+    @apply relative overflow-hidden rounded-full;
+    background: oklch(0.88 0.015 255);
+  }
+
+  .answer-correct {
+    background: oklch(0.92 0.08 145);
+    border-color: oklch(0.55 0.18 145);
+    @apply border-2;
+  }
+
+  .answer-wrong {
+    background: oklch(0.95 0.06 25);
+    border-color: oklch(0.577 0.245 27);
+    @apply border-2;
+  }
+
+  .answer-selected {
+    background: oklch(0.88 0.06 255);
+    border-color: oklch(0.35 0.1 255);
+    @apply border-2;
+  }
+
+  .rank-gold {
+    color: oklch(0.75 0.18 50);
+    font-weight: 700;
+  }
+
+  .rank-silver {
+    color: oklch(0.6 0.02 255);
+    font-weight: 700;
+  }
+
+  .rank-bronze {
+    color: oklch(0.55 0.15 30);
+    font-weight: 700;
+  }
+}
