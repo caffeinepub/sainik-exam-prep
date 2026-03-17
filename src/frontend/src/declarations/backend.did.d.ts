@@ -28,6 +28,16 @@ export interface MockTest {
   'durationMinutes' : bigint,
   'questionIds' : Array<bigint>,
 }
+export interface PracticeQuestion {
+  'id' : bigint,
+  'topic' : string,
+  'question' : string,
+  'subject' : Subject,
+  'explanation' : string,
+  'correctAnswer' : bigint,
+  'examCategory' : ExamCategory,
+  'options' : Array<string>,
+}
 export interface Question {
   'id' : bigint,
   'topic' : string,
@@ -38,8 +48,38 @@ export interface Question {
   'examCategory' : ExamCategory,
   'options' : Array<string>,
 }
+export interface QuestionInput {
+  'topic' : string,
+  'question' : string,
+  'subject' : Subject,
+  'explanation' : string,
+  'correctAnswer' : bigint,
+  'examCategory' : ExamCategory,
+  'options' : Array<string>,
+}
+export interface ShoppingItem {
+  'productName' : string,
+  'currency' : string,
+  'quantity' : bigint,
+  'priceInCents' : bigint,
+  'productDescription' : string,
+}
+export interface StripeConfiguration {
+  'allowedCountries' : Array<string>,
+  'secretKey' : string,
+}
+export type StripeSessionStatus = {
+    'completed' : { 'userPrincipal' : [] | [string], 'response' : string }
+  } |
+  { 'failed' : { 'error' : string } };
 export interface StudyNote {
   'id' : bigint,
+  'topic' : string,
+  'content' : string,
+  'subject' : Subject,
+  'examCategory' : ExamCategory,
+}
+export interface StudyNoteInput {
   'topic' : string,
   'content' : string,
   'subject' : Subject,
@@ -58,6 +98,21 @@ export interface TestAttempt {
   'timeTaken' : bigint,
   'testId' : bigint,
 }
+export interface TestSubmissionResult {
+  'total' : bigint,
+  'score' : bigint,
+  'timeTaken' : bigint,
+  'percentage' : bigint,
+}
+export interface TransformationInput {
+  'context' : Uint8Array,
+  'response' : http_request_result,
+}
+export interface TransformationOutput {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<http_header>,
+}
 export interface UserProfile {
   'name' : string,
   'examCategory' : [] | [ExamCategory],
@@ -65,17 +120,24 @@ export interface UserProfile {
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface http_header { 'value' : string, 'name' : string }
+export interface http_request_result {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<http_header>,
+}
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addQuestion' : ActorMethod<
-    [ExamCategory, Subject, string, string, Array<string>, bigint, string],
-    undefined
-  >,
-  'addStudyNote' : ActorMethod<
-    [ExamCategory, Subject, string, string],
-    undefined
-  >,
+  'addQuestion' : ActorMethod<[QuestionInput], undefined>,
+  'addStudyNote' : ActorMethod<[StudyNoteInput], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'claimFirstAdmin' : ActorMethod<[], undefined>,
+  'clearRazorpayKeyId' : ActorMethod<[], undefined>,
+  'clearStripeConfiguration' : ActorMethod<[], undefined>,
+  'createCheckoutSession' : ActorMethod<
+    [Array<ShoppingItem>, string, string],
+    string
+  >,
   'createMockTest' : ActorMethod<
     [string, ExamCategory, Array<bigint>, bigint],
     undefined
@@ -97,20 +159,27 @@ export interface _SERVICE {
   >,
   'getPracticeQuestions' : ActorMethod<
     [ExamCategory, Subject],
-    Array<Question>
+    Array<PracticeQuestion>
   >,
   'getQuestionsByCategoryAndSubject' : ActorMethod<
     [ExamCategory, Subject],
     Array<Question>
   >,
+  'getRazorpayKeyId' : ActorMethod<[], [] | [string]>,
+  'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getUserAttempts' : ActorMethod<[], Array<TestAttempt>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isRazorpayConfigured' : ActorMethod<[], boolean>,
+  'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setRazorpayKeyId' : ActorMethod<[string], undefined>,
+  'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
   'submitTestAttempt' : ActorMethod<
     [bigint, Array<bigint>, bigint],
-    { 'total' : bigint, 'score' : bigint }
+    TestSubmissionResult
   >,
+  'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

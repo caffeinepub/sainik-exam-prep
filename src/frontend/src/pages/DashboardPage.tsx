@@ -3,13 +3,16 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
   BookOpen,
+  Check,
   ChevronRight,
   ClipboardList,
   Clock,
+  Crown,
   FileText,
   MapPin,
   TrendingUp,
   Users,
+  Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
 import {
@@ -301,6 +304,64 @@ export function DashboardPage({
                 </Button>
               </div>
             )}
+
+            {/* Go Premium Panel */}
+            <div
+              data-ocid="dashboard.premium.card"
+              className="rounded-xl border-2 border-saffron-400/60 p-5 relative overflow-hidden"
+              style={{
+                background:
+                  "linear-gradient(145deg, oklch(0.18 0.07 255) 0%, oklch(0.14 0.05 250) 100%)",
+              }}
+            >
+              {/* Glow */}
+              <div
+                className="absolute top-0 right-0 w-28 h-28 rounded-full pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(circle, oklch(0.75 0.18 50 / 0.15) 0%, transparent 70%)",
+                }}
+              />
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-4 h-4 text-saffron-400" />
+                  <span className="font-display font-bold text-sm uppercase tracking-wider text-saffron-400">
+                    Go Premium
+                  </span>
+                  <Badge className="bg-saffron-400 text-navy-900 text-[10px] font-bold px-2 py-0.5 ml-auto">
+                    ₹499/yr
+                  </Badge>
+                </div>
+                <p className="text-navy-200 text-xs mb-3 leading-relaxed">
+                  Unlock unlimited practice, mock tests, and full study notes
+                  for all 4 exams.
+                </p>
+                <ul className="space-y-1.5 mb-4">
+                  {[
+                    "Unlimited mock tests & analytics",
+                    "All past year question papers",
+                    "Priority WhatsApp support",
+                  ].map((feat) => (
+                    <li
+                      key={feat}
+                      className="flex items-center gap-2 text-xs text-navy-100"
+                    >
+                      <Check className="w-3 h-3 text-saffron-400 flex-shrink-0" />
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  data-ocid="dashboard.premium.primary_button"
+                  size="sm"
+                  onClick={() => onNavigate("pricing")}
+                  className="w-full bg-saffron-400 hover:bg-saffron-500 text-navy-900 font-bold border-0 text-xs h-9"
+                >
+                  <Crown className="w-3.5 h-3.5 mr-1.5" />
+                  View Pricing Plans
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

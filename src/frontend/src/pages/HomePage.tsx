@@ -2,8 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   BookOpen,
+  Check,
   ChevronRight,
   ClipboardList,
+  Crown,
   FileText,
   LogIn,
   Shield,
@@ -338,6 +340,86 @@ export function HomePage({ onNavigate, onSelectCategory }: HomePageProps) {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Go Premium Banner */}
+      <section className="py-16 container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          data-ocid="home.premium.card"
+          className="relative overflow-hidden rounded-2xl border-2 border-saffron-400/50 p-8 md:p-12"
+          style={{
+            background:
+              "linear-gradient(135deg, oklch(0.18 0.07 255) 0%, oklch(0.14 0.05 250) 60%, oklch(0.16 0.06 280) 100%)",
+          }}
+        >
+          {/* Decorative glow */}
+          <div
+            className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle, oklch(0.75 0.18 50 / 0.12) 0%, transparent 70%)",
+            }}
+          />
+          <div className="relative flex flex-col md:flex-row md:items-center gap-8">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <Crown className="w-5 h-5 text-saffron-400" />
+                <span className="font-display font-bold text-sm uppercase tracking-widest text-saffron-400">
+                  Go Premium
+                </span>
+                <Badge className="bg-saffron-400 text-navy-900 text-[10px] font-bold px-2 py-0.5">
+                  ₹499/yr
+                </Badge>
+              </div>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-3">
+                Unlock the Full Prep Experience
+              </h2>
+              <p className="text-navy-200 text-sm md:text-base leading-relaxed mb-5 max-w-xl">
+                Get unlimited access to mock tests, all past year papers, and
+                priority support — everything you need to crack your dream
+                school entrance exam.
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {[
+                  "Unlimited mock tests & analytics",
+                  "All past year question papers",
+                  "Study notes for all 4 exams",
+                  "Priority WhatsApp support",
+                ].map((feat) => (
+                  <li
+                    key={feat}
+                    className="flex items-center gap-2 text-sm text-navy-100"
+                  >
+                    <Check className="w-4 h-4 text-saffron-400 flex-shrink-0" />
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="text-center mb-2">
+                <p className="text-navy-300 text-xs mb-1">Full year access</p>
+                <p className="font-display font-bold text-4xl text-white">
+                  ₹499
+                </p>
+                <p className="text-navy-300 text-xs">per year</p>
+              </div>
+              <Button
+                data-ocid="home.premium.primary_button"
+                size="lg"
+                onClick={() => onNavigate("pricing")}
+                className="bg-saffron-400 hover:bg-saffron-500 text-navy-900 font-bold border-0 px-8 w-full md:w-auto"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                View Plans
+              </Button>
+              <p className="text-navy-400 text-xs">No hidden charges</p>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* CTA Section */}

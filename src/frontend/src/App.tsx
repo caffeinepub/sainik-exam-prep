@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigation } from "./components/Navigation";
 import { WhatsAppButton } from "./components/WhatsAppButton";
 import { ExamCategory, Subject } from "./hooks/useQueries";
@@ -8,13 +8,25 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { HomePage } from "./pages/HomePage";
 import { LeaderboardPage } from "./pages/LeaderboardPage";
 import { MockTestsPage } from "./pages/MockTestsPage";
+import { PaymentFailure } from "./pages/PaymentFailure";
+import { PaymentSuccess } from "./pages/PaymentSuccess";
+import { PosterPage } from "./pages/PosterPage";
 import { PracticePage } from "./pages/PracticePage";
+import { PricingPage } from "./pages/PricingPage";
 import { ProgressPage } from "./pages/ProgressPage";
 import { StudyNotesPage } from "./pages/StudyNotesPage";
 import type { Page } from "./types";
 
+function getInitialPage(): Page {
+  const path = window.location.pathname;
+  if (path === "/payment-success") return "payment-success";
+  if (path === "/payment-failure") return "payment-failure";
+  if (path === "/pricing") return "pricing";
+  return "home";
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>("home");
+  const [currentPage, setCurrentPage] = useState<Page>(getInitialPage);
   const [selectedCategory, setSelectedCategory] = useState<ExamCategory>(
     ExamCategory.rimc,
   );
@@ -22,8 +34,27 @@ export default function App() {
 
   const navigate = (page: Page) => {
     setCurrentPage(page);
+    // Update browser URL for payment redirect pages
+    if (page === "payment-success") {
+      window.history.replaceState(null, "", "/payment-success");
+    } else if (page === "payment-failure") {
+      window.history.replaceState(null, "", "/payment-failure");
+    } else if (page === "pricing") {
+      window.history.replaceState(null, "", "/pricing");
+    } else {
+      window.history.replaceState(null, "", "/");
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Handle browser back/forward
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPage(getInitialPage());
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   const handleSelectCategory = (cat: ExamCategory) => {
     setSelectedCategory(cat);
@@ -88,6 +119,18 @@ export default function App() {
 
       case "admin":
         return <AdminPage />;
+
+      case "pricing":
+        return <PricingPage onNavigate={navigate} />;
+
+      case "payment-success":
+        return <PaymentSuccess onNavigate={navigate} />;
+
+      case "payment-failure":
+        return <PaymentFailure onNavigate={navigate} />;
+
+      case "poster":
+        return <PosterPage />;
 
       default:
         return (

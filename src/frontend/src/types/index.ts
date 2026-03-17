@@ -8,6 +8,10 @@ export type Page =
   | "notes"
   | "leaderboard"
   | "progress"
-  | "admin";
+  | "admin"
+  | "pricing"
+  | "payment-success"
+  | "payment-failure"
+  | "poster";
 
 export type { ExamCategory, Subject } from "../hooks/useQueries";

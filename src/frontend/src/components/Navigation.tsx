@@ -4,9 +4,11 @@ import {
   BarChart2,
   BookOpen,
   ClipboardList,
+  Crown,
   FileText,
   GraduationCap,
   Home,
+  Image,
   LogIn,
   LogOut,
   Menu,
@@ -57,6 +59,18 @@ const NAV_ITEMS = [
     label: "My Progress",
     icon: BarChart2,
     marker: "nav.progress_link",
+  },
+  {
+    page: "pricing" as Page,
+    label: "Pricing",
+    icon: Crown,
+    marker: "nav.pricing_link",
+  },
+  {
+    page: "poster" as Page,
+    label: "Poster",
+    icon: Image,
+    marker: "nav.poster_link",
   },
 ];
 
@@ -114,20 +128,19 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                   {label}
                 </button>
               ))}
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => handleNav("admin")}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    currentPage === "admin"
-                      ? "bg-saffron-400/20 text-saffron-400 border border-saffron-400/30"
-                      : "text-navy-200 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Settings className="w-4 h-4" />
-                  Admin
-                </button>
-              )}
+              <button
+                type="button"
+                data-ocid="nav.admin_link"
+                onClick={() => handleNav("admin")}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  currentPage === "admin"
+                    ? "bg-saffron-400/20 text-saffron-400 border border-saffron-400/30"
+                    : "text-navy-200 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                Admin
+              </button>
             </nav>
 
             {/* Auth */}
@@ -207,20 +220,19 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                   {label}
                 </button>
               ))}
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => handleNav("admin")}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 text-left ${
-                    currentPage === "admin"
-                      ? "bg-saffron-400/20 text-saffron-400"
-                      : "text-navy-200 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Settings className="w-4 h-4" />
-                  Admin
-                </button>
-              )}
+              <button
+                type="button"
+                data-ocid="nav.admin_link"
+                onClick={() => handleNav("admin")}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 text-left ${
+                  currentPage === "admin"
+                    ? "bg-saffron-400/20 text-saffron-400"
+                    : "text-navy-200 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                Admin
+              </button>
               <div className="pt-2 border-t border-navy-700/50">
                 {isLoggedIn ? (
                   <button

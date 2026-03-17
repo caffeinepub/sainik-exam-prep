@@ -7,6 +7,56 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface PracticeQuestion {
+    id: bigint;
+    topic: string;
+    question: string;
+    subject: Subject;
+    explanation: string;
+    correctAnswer: bigint;
+    examCategory: ExamCategory;
+    options: Array<string>;
+}
+export interface MockTest {
+    id: bigint;
+    title: string;
+    examCategory: ExamCategory;
+    durationMinutes: bigint;
+    questionIds: Array<bigint>;
+}
+export interface LeaderboardEntry {
+    principal: Principal;
+    total: bigint;
+    scorePercentage: bigint;
+    timestamp: bigint;
+    testTitle: string;
+}
+export interface TransformationOutput {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export interface StudyNoteInput {
+    topic: string;
+    content: string;
+    subject: Subject;
+    examCategory: ExamCategory;
+}
+export interface http_header {
+    value: string;
+    name: string;
+}
+export interface http_request_result {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export interface TestSubmissionResult {
+    total: bigint;
+    score: bigint;
+    timeTaken: bigint;
+    percentage: bigint;
+}
 export interface TestAttempt {
     principal: Principal;
     total: bigint;
@@ -16,15 +66,18 @@ export interface TestAttempt {
     timeTaken: bigint;
     testId: bigint;
 }
-export interface LeaderboardEntry {
-    principal: Principal;
-    total: bigint;
-    scorePercentage: bigint;
-    timestamp: bigint;
-    testTitle: string;
+export interface ShoppingItem {
+    productName: string;
+    currency: string;
+    quantity: bigint;
+    priceInCents: bigint;
+    productDescription: string;
 }
-export interface Question {
-    id: bigint;
+export interface TransformationInput {
+    context: Uint8Array;
+    response: http_request_result;
+}
+export interface QuestionInput {
     topic: string;
     question: string;
     subject: Subject;
@@ -32,6 +85,22 @@ export interface Question {
     correctAnswer: bigint;
     examCategory: ExamCategory;
     options: Array<string>;
+}
+export type StripeSessionStatus = {
+    __kind__: "completed";
+    completed: {
+        userPrincipal?: string;
+        response: string;
+    };
+} | {
+    __kind__: "failed";
+    failed: {
+        error: string;
+    };
+};
+export interface StripeConfiguration {
+    allowedCountries: Array<string>;
+    secretKey: string;
 }
 export interface StudyNote {
     id: bigint;
@@ -44,12 +113,15 @@ export interface UserProfile {
     name: string;
     examCategory?: ExamCategory;
 }
-export interface MockTest {
+export interface Question {
     id: bigint;
-    title: string;
+    topic: string;
+    question: string;
+    subject: Subject;
+    explanation: string;
+    correctAnswer: bigint;
     examCategory: ExamCategory;
-    durationMinutes: bigint;
-    questionIds: Array<bigint>;
+    options: Array<string>;
 }
 export enum ExamCategory {
     rms = "rms",
@@ -69,9 +141,13 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addQuestion(examCategory: ExamCategory, subject: Subject, topic: string, question: string, options: Array<string>, correctAnswer: bigint, explanation: string): Promise<void>;
-    addStudyNote(examCategory: ExamCategory, subject: Subject, topic: string, content: string): Promise<void>;
+    addQuestion(questionInput: QuestionInput): Promise<void>;
+    addStudyNote(noteInput: StudyNoteInput): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimFirstAdmin(): Promise<void>;
+    clearRazorpayKeyId(): Promise<void>;
+    clearStripeConfiguration(): Promise<void>;
+    createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
     createMockTest(title: string, examCategory: ExamCategory, questionIds: Array<bigint>, durationMinutes: bigint): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
@@ -82,14 +158,18 @@ export interface backendInterface {
     }>;
     getMockTestsByCategory(cat: ExamCategory): Promise<Array<MockTest>>;
     getNotesByCategoryAndSubject(cat: ExamCategory, subj: Subject): Promise<Array<StudyNote>>;
-    getPracticeQuestions(cat: ExamCategory, subj: Subject): Promise<Array<Question>>;
+    getPracticeQuestions(cat: ExamCategory, subj: Subject): Promise<Array<PracticeQuestion>>;
     getQuestionsByCategoryAndSubject(cat: ExamCategory, subj: Subject): Promise<Array<Question>>;
+    getRazorpayKeyId(): Promise<string | null>;
+    getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserAttempts(): Promise<Array<TestAttempt>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    isRazorpayConfigured(): Promise<boolean>;
+    isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    submitTestAttempt(testId: bigint, answers: Array<bigint>, timeTaken: bigint): Promise<{
-        total: bigint;
-        score: bigint;
-    }>;
+    setRazorpayKeyId(key: string): Promise<void>;
+    setStripeConfiguration(config: StripeConfiguration): Promise<void>;
+    submitTestAttempt(testId: bigint, answers: Array<bigint>, timeTaken: bigint): Promise<TestSubmissionResult>;
+    transform(input: TransformationInput): Promise<TransformationOutput>;
 }

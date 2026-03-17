@@ -170,15 +170,15 @@ export function useAddQuestion() {
       explanation: string;
     }) => {
       if (!actor) throw new Error("Not connected");
-      return actor.addQuestion(
-        params.examCategory,
-        params.subject,
-        params.topic,
-        params.question,
-        params.options,
-        params.correctAnswer,
-        params.explanation,
-      );
+      return actor.addQuestion({
+        examCategory: params.examCategory,
+        subject: params.subject,
+        topic: params.topic,
+        question: params.question,
+        options: params.options,
+        correctAnswer: params.correctAnswer,
+        explanation: params.explanation,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions"] });
@@ -222,15 +222,86 @@ export function useAddStudyNote() {
       content: string;
     }) => {
       if (!actor) throw new Error("Not connected");
-      return actor.addStudyNote(
-        params.examCategory,
-        params.subject,
-        params.topic,
-        params.content,
-      );
+      return actor.addStudyNote({
+        examCategory: params.examCategory,
+        subject: params.subject,
+        topic: params.topic,
+        content: params.content,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+}
+
+export function useInitializeAdmin() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (adminToken: string) => {
+      if (!actor) throw new Error("Not connected");
+      return actor._initializeAccessControlWithSecret(adminToken);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+}
+
+export function useClaimFirstAdmin() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error("Not connected");
+      return actor.claimFirstAdmin();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+}
+
+export function useIsStripeConfigured() {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ["isStripeConfigured"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isStripeConfigured();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSetStripeConfiguration() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (config: {
+      secretKey: string;
+      allowedCountries: string[];
+    }) => {
+      if (!actor) throw new Error("Not connected");
+      return actor.setStripeConfiguration(config);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isStripeConfigured"] });
+    },
+  });
+}
+
+export function useClearStripeConfiguration() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error("Not connected");
+      return actor.clearStripeConfiguration();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isStripeConfigured"] });
     },
   });
 }
