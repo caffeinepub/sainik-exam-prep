@@ -12,6 +12,7 @@ export type Page =
   | "pricing"
   | "payment-success"
   | "payment-failure"
-  | "poster";
+  | "poster"
+  | "govt-jobs";
 
 export type { ExamCategory, Subject } from "../hooks/useQueries";

@@ -5,6 +5,7 @@ import { WhatsAppButton } from "./components/WhatsAppButton";
 import { ExamCategory, Subject } from "./hooks/useQueries";
 import { AdminPage } from "./pages/AdminPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { GovtJobsPage } from "./pages/GovtJobsPage";
 import { HomePage } from "./pages/HomePage";
 import { LeaderboardPage } from "./pages/LeaderboardPage";
 import { MockTestsPage } from "./pages/MockTestsPage";
@@ -34,7 +35,6 @@ export default function App() {
 
   const navigate = (page: Page) => {
     setCurrentPage(page);
-    // Update browser URL for payment redirect pages
     if (page === "payment-success") {
       window.history.replaceState(null, "", "/payment-success");
     } else if (page === "payment-failure") {
@@ -47,7 +47,6 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Handle browser back/forward
   useEffect(() => {
     const handlePopState = () => {
       setCurrentPage(getInitialPage());
@@ -131,6 +130,9 @@ export default function App() {
 
       case "poster":
         return <PosterPage />;
+
+      case "govt-jobs":
+        return <GovtJobsPage />;
 
       default:
         return (

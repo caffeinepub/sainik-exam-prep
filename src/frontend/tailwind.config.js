@@ -16,7 +16,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Cabinet Grotesk"', "system-ui", "sans-serif"],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
         body: ['"Plus Jakarta Sans"', "system-ui", "sans-serif"],
         sans: ['"Plus Jakarta Sans"', "system-ui", "sans-serif"],
       },
