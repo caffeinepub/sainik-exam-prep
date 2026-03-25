@@ -143,6 +143,7 @@ export const idlService = IDL.Service({
   'addStudyNote' : IDL.Func([StudyNoteInput], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'claimFirstAdmin' : IDL.Func([], [], []),
+    'claimAdminWithCode' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'clearRazorpayKeyId' : IDL.Func([], [], []),
   'clearStripeConfiguration' : IDL.Func([], [], []),
   'createCheckoutSession' : IDL.Func(
@@ -348,6 +349,7 @@ export const idlFactory = ({ IDL }) => {
     'addStudyNote' : IDL.Func([StudyNoteInput], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'claimFirstAdmin' : IDL.Func([], [], []),
+    'claimAdminWithCode' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'clearRazorpayKeyId' : IDL.Func([], [], []),
     'clearStripeConfiguration' : IDL.Func([], [], []),
     'createCheckoutSession' : IDL.Func(

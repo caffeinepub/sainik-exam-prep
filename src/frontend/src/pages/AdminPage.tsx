@@ -33,12 +33,14 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useActor } from "../hooks/useActor";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   ExamCategory,
   Subject,
   useAddQuestion,
   useAddStudyNote,
+  useClaimAdminWithCode,
   useClaimFirstAdmin,
   useCreateMockTest,
   useInitializeAdmin,
@@ -60,10 +62,12 @@ import {
 
 export function AdminPage() {
   const { data: isAdmin, isLoading } = useIsAdmin();
+  const { isFetching: actorFetching } = useActor();
   const { identity } = useInternetIdentity();
   const isLoggedIn = !!identity;
 
-  if (isLoading) {
+  // Show spinner while actor is initialising OR while the isAdmin query is running
+  if (actorFetching || isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
@@ -1135,7 +1139,12 @@ function SeedContentPanel() {
   );
 }
 
+const ADMIN_SECRET_CODE = "SAINIK2024ADMIN";
+
 function AdminActivationForm() {
+  const { isFetching: actorFetching } = useActor();
+  const actorReady = !actorFetching;
+
   const { mutateAsync: initializeAdmin, isPending: isTokenPending } =
     useInitializeAdmin();
   const {
@@ -1143,7 +1152,11 @@ function AdminActivationForm() {
     isPending: isClaimPending,
     isError: isClaimError,
   } = useClaimFirstAdmin();
+  const { mutateAsync: claimAdminWithCode, isPending: isCodePending } =
+    useClaimAdminWithCode();
   const [token, setToken] = useState("");
+  const [secretCode, setSecretCode] = useState("");
+  const [codeError, setCodeError] = useState("");
 
   const handleClaim = async () => {
     try {
@@ -1152,6 +1165,27 @@ function AdminActivationForm() {
       setTimeout(() => window.location.reload(), 800);
     } catch {
       toast.error("Admin already assigned to another account.");
+    }
+  };
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCodeError("");
+    const trimmed = secretCode.trim();
+    if (!trimmed) {
+      setCodeError("Please enter the secret code");
+      return;
+    }
+    try {
+      const success = await claimAdminWithCode(trimmed);
+      if (success) {
+        toast.success("Admin access granted! Reloading...");
+        setTimeout(() => window.location.reload(), 800);
+      } else {
+        setCodeError("Invalid secret code. Please try again.");
+      }
+    } catch {
+      setCodeError("Something went wrong. Please try again.");
     }
   };
 
@@ -1174,8 +1208,25 @@ function AdminActivationForm() {
     }
   };
 
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(ADMIN_SECRET_CODE).then(() => {
+      toast.success("Code copied to clipboard!");
+    });
+  };
+
   return (
     <div className="mt-2 text-left border-t border-border pt-6 space-y-6">
+      {/* Connecting indicator */}
+      {actorFetching && (
+        <div
+          data-ocid="admin.activation.loading_state"
+          className="flex items-center gap-2 text-xs text-muted-foreground bg-secondary/50 rounded-lg px-3 py-2"
+        >
+          <Loader2 className="w-3 h-3 animate-spin" />
+          Connecting to server...
+        </div>
+      )}
+
       {/* One-click claim section */}
       <div className="bg-saffron-400/10 border border-saffron-400/30 rounded-xl p-5">
         <div className="flex items-center gap-2 mb-2">
@@ -1191,11 +1242,16 @@ function AdminActivationForm() {
         <Button
           data-ocid="admin.claim.primary_button"
           type="button"
-          disabled={isClaimPending}
+          disabled={isClaimPending || !actorReady}
           onClick={handleClaim}
           className="w-full bg-saffron-400 hover:bg-saffron-500 text-navy-900 font-bold border-0 transition-all duration-300 h-11 text-sm"
         >
-          {isClaimPending ? (
+          {!actorReady ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Connecting to server...
+            </>
+          ) : isClaimPending ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Claiming Admin...
@@ -1217,6 +1273,68 @@ function AdminActivationForm() {
         )}
       </div>
 
+      {/* Secret code section */}
+      <div className="bg-navy-800/10 border border-navy-700/30 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <KeyRound className="w-5 h-5 text-navy-600" />
+          <h3 className="text-sm font-bold text-foreground">
+            Use Secret Admin Code
+          </h3>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+          Enter the secret admin code to claim admin rights even if another
+          account already registered.
+        </p>
+        <form onSubmit={handleCodeSubmit} className="space-y-3">
+          <Input
+            data-ocid="admin.secretcode.input"
+            type="text"
+            value={secretCode}
+            onChange={(e) => setSecretCode(e.target.value)}
+            placeholder="Enter secret admin code..."
+            className="font-mono text-sm"
+          />
+          {/* Clickable hint box showing the code */}
+          <button
+            type="button"
+            onClick={handleCopyCode}
+            title="Click to copy"
+            className="w-full text-left bg-muted rounded-lg p-2 font-mono text-sm cursor-copy select-all border border-border hover:bg-muted/80 transition-colors"
+          >
+            <span className="text-xs text-muted-foreground mr-1">
+              The admin code is:
+            </span>
+            <span className="font-bold text-foreground">
+              {ADMIN_SECRET_CODE}
+            </span>
+          </button>
+          {codeError && <p className="text-xs text-destructive">{codeError}</p>}
+          <Button
+            data-ocid="admin.secretcode.submit_button"
+            type="submit"
+            disabled={isCodePending || !actorReady}
+            className="w-full bg-navy-800 hover:bg-saffron-400 hover:text-navy-900 text-white font-bold border-0 transition-all duration-300 h-10"
+          >
+            {!actorReady ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Connecting to server...
+              </>
+            ) : isCodePending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Verifying...
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-4 h-4 mr-2" />
+                Claim with Code
+              </>
+            )}
+          </Button>
+        </form>
+      </div>
+
       {/* Manual token fallback */}
       <div>
         <div className="flex items-center gap-3 mb-3">
@@ -1233,9 +1351,7 @@ function AdminActivationForm() {
           </p>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
-          Paste your admin token here to claim admin access directly. This can
-          only be done once — the first person to enter the correct token
-          becomes admin.
+          Paste your admin token here to claim admin access directly.
         </p>
         <form onSubmit={handleSubmit} className="space-y-3">
           <Input
@@ -1250,10 +1366,15 @@ function AdminActivationForm() {
           <Button
             data-ocid="admin.activation.submit_button"
             type="submit"
-            disabled={isTokenPending}
+            disabled={isTokenPending || !actorReady}
             className="w-full bg-navy-800 hover:bg-saffron-400 hover:text-navy-900 text-white font-bold border-0 transition-all duration-300 h-10"
           >
-            {isTokenPending ? (
+            {!actorReady ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Connecting to server...
+              </>
+            ) : isTokenPending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Activating...

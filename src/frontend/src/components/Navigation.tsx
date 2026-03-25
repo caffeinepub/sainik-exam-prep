@@ -9,6 +9,7 @@ import {
   GraduationCap,
   Home,
   Image,
+  LayoutDashboard,
   LogIn,
   LogOut,
   Menu,
@@ -30,6 +31,12 @@ interface NavigationProps {
 
 const NAV_ITEMS = [
   { page: "home" as Page, label: "Home", icon: Home, marker: "nav.home_link" },
+  {
+    page: "dashboard" as Page,
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    marker: "nav.dashboard_link",
+  },
   {
     page: "practice" as Page,
     label: "Practice",

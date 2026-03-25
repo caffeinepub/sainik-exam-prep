@@ -263,6 +263,20 @@ export function useClaimFirstAdmin() {
   });
 }
 
+export function useClaimAdminWithCode() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (code: string) => {
+      if (!actor) throw new Error("Not connected");
+      return actor.claimAdminWithCode(code);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+}
+
 export function useIsStripeConfigured() {
   const { actor, isFetching } = useActor();
   return useQuery({

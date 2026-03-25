@@ -308,20 +308,10 @@ export function DashboardPage({
             {/* Go Premium Panel */}
             <div
               data-ocid="dashboard.premium.card"
-              className="rounded-xl border-2 border-saffron-400/60 p-5 relative overflow-hidden"
-              style={{
-                background:
-                  "linear-gradient(145deg, oklch(0.18 0.07 255) 0%, oklch(0.14 0.05 250) 100%)",
-              }}
+              className="rounded-xl border-2 border-saffron-400/60 p-5 relative overflow-hidden bg-[#0f1b35]"
             >
               {/* Glow */}
-              <div
-                className="absolute top-0 right-0 w-28 h-28 rounded-full pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(circle, oklch(0.75 0.18 50 / 0.15) 0%, transparent 70%)",
-                }}
-              />
+              <div className="absolute top-0 right-0 w-28 h-28 rounded-full pointer-events-none bg-saffron-400/10" />
               <div className="relative">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-4 h-4 text-saffron-400" />

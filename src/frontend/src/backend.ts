@@ -228,6 +228,7 @@ export interface backendInterface {
     addStudyNote(noteInput: StudyNoteInput): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     claimFirstAdmin(): Promise<void>;
+    claimAdminWithCode(code: string): Promise<boolean>;
     clearRazorpayKeyId(): Promise<void>;
     clearStripeConfiguration(): Promise<void>;
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
@@ -326,6 +327,21 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.claimFirstAdmin();
+            return result;
+        }
+    }
+
+    async claimAdminWithCode(code: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.claimAdminWithCode(code);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.claimAdminWithCode(code);
             return result;
         }
     }

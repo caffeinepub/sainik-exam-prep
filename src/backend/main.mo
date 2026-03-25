@@ -739,4 +739,20 @@ actor {
       };
     };
   };
+
+  // ---------- Admin Secret Code Claim ----------
+  let adminSecretCode : Text = "SAINIK2024ADMIN";
+
+  public shared ({ caller }) func claimAdminWithCode(code : Text) : async Bool {
+    if (caller.isAnonymous()) {
+      return false;
+    };
+    if (code != adminSecretCode) {
+      return false;
+    };
+    // Force assign admin regardless of adminAssigned flag
+    accessControlState.userRoles.add(caller, #admin);
+    accessControlState.adminAssigned := true;
+    return true;
+  };
 };

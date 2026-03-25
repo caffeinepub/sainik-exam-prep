@@ -132,6 +132,7 @@ export interface _SERVICE {
   'addStudyNote' : ActorMethod<[StudyNoteInput], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'claimFirstAdmin' : ActorMethod<[], undefined>,
+  'claimAdminWithCode' : ActorMethod<[string], boolean>,
   'clearRazorpayKeyId' : ActorMethod<[], undefined>,
   'clearStripeConfiguration' : ActorMethod<[], undefined>,
   'createCheckoutSession' : ActorMethod<
